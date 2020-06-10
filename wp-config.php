@@ -77,7 +77,7 @@ $table_prefix = 'wp_';
  *
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
-define( 'WP_DEBUG', false );
+define( 'WP_DEBUG', true );
 
 /* That's all, stop editing! Happy publishing. */
 /**
@@ -123,3 +123,6 @@ if ( !defined( 'WP_CLI' ) ) {
     });
     add_filter( 'auto_update_translation', '__return_false' );
 }
+
+define('DISALLOW_FILE_EDIT', false);
+define('DISALLOW_FILE_MODS', false);
