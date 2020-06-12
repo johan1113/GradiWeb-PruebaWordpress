@@ -10,6 +10,40 @@
  * Version: 0.1
  */
 
+//register_activation_hook( __FILE__, 'myplugin_update_db_check' );
+add_action( 'plugins_loaded', 'jal_install' );
+
+global $jal_db_version;
+$jal_db_version = '1.0';
+
+function jal_install() {
+	global $wpdb;
+	global $jal_db_version;
+
+	$table_name = $wpdb->prefix . 'NASA_';
+	
+	$charset_collate = $wpdb->get_charset_collate();
+
+	$sql = "CREATE TABLE $table_name (
+		id mediumint(9) NOT NULL AUTO_INCREMENT,
+		data text NOT NULL,
+		PRIMARY KEY  (id)
+	) $charset_collate;";
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	dbDelta( $sql );
+
+	add_option( 'jal_db_version', $jal_db_version );
+}
+
+function myplugin_update_db_check() {
+    global $jal_db_version;
+    if ( get_site_option( 'jal_db_version' ) != $jal_db_version ) {
+        jal_install();
+    }
+}
+
+
 //implement new menu options at the admin menu of wrodpress back-end
 add_action("admin_menu", "addMenu");
 
@@ -169,7 +203,7 @@ function nasa_contact_form(){
 
             $content .= '<div>';   
             $content .= '<label for="alien-meeting-date">¿Cuándo fue la última vez que tuviste contacto con extraterrestres?</label>';
-            $content .= '<input type="date" id="alien-meeting-date"/>';
+            $content .= '<input type="date" id="alien-meeting-date" name="alien-meeting-date"/>';
             $content .= '</div>';
             $content .= '<br />';
 
@@ -199,5 +233,39 @@ function nasa_thanks_message(){
 
 add_shortcode('nasa_thanks_message', 'nasa_thanks_message');
 
+// get all the input values from the form, and then upload it at the database "WP_NASA_"
+function nasa_form_capture(){
+
+    global $post, $wpdb;
+
+    if(array_key_exists('submit-nasa-form',$_POST)){
+        $name = 'Nombre: '.$_POST['full_name'];
+        $useremail = 'Correo: '.$_POST['email'];
+        $age = 'Edad: '.$_POST['age'];
+        $gender = 'Sexo: '.$_POST['gender'];
+        $motivation = 'Mesnaje de motivación: '.$_POST['motivation'];
+        $alien_meeting_date = 'Última fecha de encuentro con Aliens: '.$_POST['alien-meeting-date'];
+
+        $content_db = '';
+        $content_db .= $name.' <br /> ';
+        $content_db .= $useremail.' <br /> ';
+        $content_db .= $age.' <br /> ';
+        $content_db .= $gender.' <br /> ';
+        $content_db .= $motivation.' <br /> ';
+        $content_db .= $alien_meeting_date.' <br /> ';
+
+        $table_name = $wpdb->prefix . 'NASA_';
+
+        /* Add the submission to the database using the table we created*/
+        $wpdb->insert( 
+            $table_name, 
+            array( 
+                'data' => $content_db, 
+            ) 
+        );
+    }
+}
+
+add_action('wp_head','nasa_form_capture');
 
 ?>
