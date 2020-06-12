@@ -10,12 +10,13 @@
  * Version: 0.1
  */
 
-//register_activation_hook( __FILE__, 'myplugin_update_db_check' );
+// call to review the posibility to create a new database since the plugin is loades
 add_action( 'plugins_loaded', 'jal_install' );
 
 global $jal_db_version;
 $jal_db_version = '1.0';
 
+// installation of the new DB
 function jal_install() {
 	global $wpdb;
 	global $jal_db_version;
@@ -36,6 +37,7 @@ function jal_install() {
 	add_option( 'jal_db_version', $jal_db_version );
 }
 
+// verification to consider or not to create a new DB, looking if is already created
 function myplugin_update_db_check() {
     global $jal_db_version;
     if ( get_site_option( 'jal_db_version' ) != $jal_db_version ) {
