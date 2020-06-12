@@ -33,10 +33,10 @@ add_action("admin_menu", "addMenu");
     $intro_text = get_option('introduction_text_db', '');
     $thanks_text = get_option('thanks_text_db', '');
 
-    // Enqueue WordPress media scripts
+    // Enqueue WordPress media
     wp_enqueue_media();
     // Enqueue custom script that will interact with wp.media
-    wp_enqueue_script( 'myprefix_script', plugins_url( '/js/script.js' , __FILE__ ), array('jquery'), '0.1' );
+    wp_enqueue_script( 'main_script', plugins_url( '/js/script.js' , __FILE__ ), array('jquery'), '0.1' );
 
     // already uploaded image verifcation
     $image_id = get_option('myprefix_image_id');
@@ -48,6 +48,7 @@ add_action("admin_menu", "addMenu");
         $image = '<img id="myprefix-preview-image" src="https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg" />';
     }
     
+    // update global variables for the form personalization content
     if(array_key_exists('submit_form_configs',$_POST)){
         update_option('introduction_text_db',$_POST['introduction_text'] );
         update_option('thanks_text_db',$_POST['thanks_text'] );
@@ -61,7 +62,6 @@ add_action("admin_menu", "addMenu");
         <!-- IMAGE LOGO -->
         <label for="myprefix_image_id"><h3>Logo:</h3>Sube una imagen para el encabezado del formulario:</label>
         <br />
-        <!--<input type="file" name="logoimage" id="logoimage" size="25" />-->
         <?php echo $image; ?>
         <br />
         <input type="hidden" name="myprefix_image_id" id="myprefix_image_id" value="<?php echo esc_attr( $image_id ); ?>" class="regular-text" />
@@ -94,10 +94,10 @@ add_action("admin_menu", "addMenu");
 add_action( 'wp_ajax_myprefix_get_image', 'myprefix_get_image'   );
 function myprefix_get_image() {
     if(isset($_GET['id']) ){
-
+        //update gobal variable for the logo-icon source image form
         $src_image = wp_get_attachment_image_src(  filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ) , 'full');
         update_option('logo_img_db', $src_image[0]);
-
+        //build the image to preview it at the configuration section of the plugin
         $image = wp_get_attachment_image( filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ), 'medium', false, array( 'id' => 'myprefix-preview-image' ) );
         $data = array(
             'image'    => $image,
@@ -113,6 +113,7 @@ function report_nasa_scripts_page(){
     echo '<div class="wrap"> Bienvenido a Reportes</div>';
 }
 
+//all the tags content require for the Nasa contact form
 function nasa_contact_form(){
 
     //get db variables
@@ -120,60 +121,83 @@ function nasa_contact_form(){
     $intro_text = get_option('introduction_text_db', '');
     $thanks_text = get_option('thanks_text_db', '');
 
+    // Enqueue WordPress media
+    wp_enqueue_media();
+    // Enqueue custom css that will interact with wp.media
+    wp_enqueue_style('Form Styles', plugins_url( '/styles/form.css' , __FILE__ ), array(), '0.1.0', 'all');
+
+
     /*content variable*/
     $content = '';
 
-    $content .= '<p>'.$logo_img.'</p>';
-    $content .= '<p>'.$intro_text.'</p>';
-    $content .= '<p>'.$thanks_text.'</p>';
+    $content .= '<section class="nasa-contact-form">';
 
-    //onfocus="(this.type='date')" onblur="(this.type='text')" 
-
-    $content .= '<form method="post" action="/nasa-gracias">';
-
-        $content .= '<input type="text" name="full_name" placeholder="Nombre Completo" />';
-        $content .= '<br />';
-
-        $content .= '<input type="number" name="age" placeholder="Edad (solo números)" />';
-        $content .= '<br />';
-
-        $content .= '<select name="gender">';
-        $content .= '<option value="" disabled selected>Selecciona tu sexo</option>';
-        $content .= '<option value="female">Femenino</option>';
-        $content .= '<option value="male">Masculino</option>';
-        $content .= '<option value="undefined_sex">Otro</option>';
-        $content .= '</select>';
-        $content .= '<br />';
-        $content .= '<br />';
-
-        $content .= '<input type="email" name="email" placeholder="Correo electrónico" />';
-        $content .= '<br />';
-
-        $content .= '<textarea name="motivation" placeholder="¿Cuál es tu motivo para ir a la luna?"></textarea>';
-        $content .= '<br />';
-
-        $content .= '<label for="alien-meeting-date">¿Cuándo fue la última vez que tuviste contacto con extraterrestres?</label>';
-        $content .= '<input type="date" id="alien-meeting-date"/>';
-        $content .= '<br />';
-
-        $content .= '<input type="submit" name="submit-nasa-form" value="ENVIAR INFORMACIÓN" />';
     
-    $content .= '</form>';
+        $content .= '<div class="header">';
+        if($logo_img!=''){
+            $content .= '<img src="'.$logo_img.'">';
+        }
+        if($intro_text!=''){
+            $content .= '<p class="intro-text">'.$intro_text.'</p>';
+        }
+        $content .= '</div>';
+        $content .= '<br />';
+        
+        //$content .= '<p>'.$thanks_text.'</p>';
+
+        $content .= '<form class="form-content" method="post" action="/wordpress/nasa-gracias">';
+
+            $content .= '<div>';    
+            $content .= '<input type="text" name="full_name" placeholder="Nombre Completo" />';
+            $content .= '<input type="number" name="age" placeholder="Edad (solo números)" />';
+            $content .= '</div>';
+            $content .= '<br />';
+
+            $content .= '<div>';    
+            $content .= '<select name="gender">';
+            $content .= '<option value="" disabled selected>Selecciona tu sexo</option>';
+            $content .= '<option value="female">Femenino</option>';
+            $content .= '<option value="male">Masculino</option>';
+            $content .= '<option value="undefined_sex">Otro</option>';
+            $content .= '</select>';
+            $content .= '<input type="email" name="email" placeholder="Correo electrónico" />';
+            $content .= '</div>';
+            $content .= '<br />';
+
+            $content .= '<textarea name="motivation" placeholder="¿Cuál es tu motivo para ir a la luna?"></textarea>';
+            $content .= '<br />';
+
+            $content .= '<div>';   
+            $content .= '<label for="alien-meeting-date">¿Cuándo fue la última vez que tuviste contacto con extraterrestres?</label>';
+            $content .= '<input type="date" id="alien-meeting-date"/>';
+            $content .= '</div>';
+            $content .= '<br />';
+
+            $content .= '<div class="submit-form-container">';   
+            $content .= '<input class="submit-form" type="submit" name="submit-nasa-form" value="ENVIAR INFORMACIÓN" />';
+            $content .= '</div>';
+        
+        $content .= '</form>';
+    $content .= '</section>';
 
     return $content;
 }
 
 add_shortcode('nasa_contact_form', 'nasa_contact_form');
 
-//referencias
+// add the thanks message configured at the configuration section of the plugin
+function nasa_thanks_message(){
 
-//HOW TO UPLOAD AN IMGE WITH PHP WORDPRESS
-//https://rudrastyh.com/wordpress/how-to-add-images-to-media-library-from-uploaded-files-programmatically.html
+    //get db variables
+    $thanks_text = get_option('thanks_text_db', '');
 
-//https://pqina.nl/blog/uploading-files-to-wordpress-media-library/
+    /*content variable*/
+    $content = '';
+    $content .= $thanks_text;
+    return $content;
+}
 
-//https://www.youtube.com/watch?v=6oKSYD_mTTU
+add_shortcode('nasa_thanks_message', 'nasa_thanks_message');
 
-//https://blog.idrsolutions.com/2014/07/creating-wordpress-plugin-part-2-uploading-media-linking-web-service/
 
 ?>

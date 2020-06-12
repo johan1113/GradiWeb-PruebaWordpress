@@ -1,0 +1,53 @@
+<!-- start Simple Custom CSS and JS -->
+<style type="text/css">
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+.post-inner {
+  padding: 0;
+}
+
+.entry-header{
+  display: none;
+}
+
+.entry-content{
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
+  padding: 5%;
+}
+
+.entry-content p{
+   font-family: 'Poppins', sans-serif;
+}  
+
+.description-content{
+  width: 40%;
+  z-index: 2;
+}
+
+.description-content .divider{
+  width: 50%;
+  height:5px;
+  background-color: rgb(213, 36, 50);
+  margin: 0;
+}
+
+.nasa-contact-form{
+  width: 55%;
+  margin-left: 5%;
+}
+
+.thanks-bg-image {
+  width: 55%;
+  margin-left: 5%;
+}
+
+.thanks-bg-image img{
+  max-width: none;
+  width: 100%;
+  align-self: right;
+}
+
+</style>
+<!-- end Simple Custom CSS and JS -->

@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+.nasa-contact-form{
+    background-color: rgb(213, 36, 50);
+    padding: 4vw;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    font-family: 'Poppins', sans-serif;
+}
+
+.nasa-contact-form .header img{
+    width: 15%;
+    height: auto;
+}
+
+.nasa-contact-form .header .intro-text{
+    margin: 0;
+    width: 80%;
+    margin-left: 3%;
+    text-align: left;
+    font-size: 3rem;
+}
+
+.nasa-contact-form .header{
+    align-items: flex-end;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.form-content div input, .form-content div select, .form-content div label{
+    width: 45%;
+    border-style: none;
+}
+
+.form-content textarea{
+    border-style: none;
+}
+
+.form-content div{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-content .submit-form-container{
+    justify-content: center;
+}
+
+.form-content .submit-form-container .submit-form{
+    text-decoration: none;
+    background-color: rgb(8, 26, 55);
+    
+    color: white;
+    transition: .3s ease-out;
+}
+
+.form-content .submit-form-container .submit-form:hover{
+    background-color: rgb(40, 99, 211);
+}
