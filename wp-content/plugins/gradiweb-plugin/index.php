@@ -68,12 +68,22 @@ add_action("admin_menu", "addMenu");
 
     $intro_text = get_option('introduction_text_db', '');
     $thanks_text = get_option('thanks_text_db', '');
+    $logo_img = get_option('logo_img_db','');
 
     // Enqueue WordPress media
     wp_enqueue_media();
     // Enqueue custom script that will interact with wp.media
     wp_enqueue_script( 'main_script', plugins_url( '/js/script.js' , __FILE__ ), array('jquery'), '0.1' );
 
+    if( $logo_img != '') {
+        // Generate the saved image preview
+        $image = '<img id="myprefix-preview-image" src="'.$logo_img.'" height="250"/>';
+    } else {
+        // Some default image
+        $image = '<img id="myprefix-preview-image" src="https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg" height="250"/>';
+    }
+
+    /*
     // already uploaded image verifcation
     $image_id = get_option('myprefix_image_id');
     if( intval( $image_id ) > 0 ) {
@@ -83,7 +93,8 @@ add_action("admin_menu", "addMenu");
         // Some default image
         $image = '<img id="myprefix-preview-image" src="https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg" />';
     }
-    
+    */
+
     // update global variables for the form personalization content
     if(array_key_exists('submit_form_configs',$_POST)){
         update_option('introduction_text_db',$_POST['introduction_text'] );
@@ -146,7 +157,34 @@ function myprefix_get_image() {
 
 //display content of "Reporte" submenu section of "NASA clientes"
 function report_nasa_scripts_page(){
-    echo '<div class="wrap"> Bienvenido a Reportes</div>';
+
+    echo '<h1>Bienvenido a tus Reportes</h1>';
+    echo '<p>Aquí encontrarás todos los resultados de los formularios anteriormente llenados por los candidatos a Astronauta</p>';
+    echo '<br />';
+
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'NASA_';
+ 
+     //select MySQLi dabatase table
+     $results = $wpdb->get_results( "SELECT * FROM $table_name");
+
+    // Checking if $results have some values or not
+    if(!empty($results)){                    
+    echo "<table width='100%' border='0'>"; // Adding <table> and <tbody> tag outside foreach loop so that it wont create again and again
+    echo "<tbody>";  
+    $index = 1;
+    // get each value from the selected table
+    foreach($results as $row){
+        echo "<tr>";        
+        echo "<th>Resultado #".$index." :</th>" . "<td>" . $row->data . "</td>";   //fetching data from user_ip field
+        echo "</tr>";
+        echo "<td colspan='2'><hr size='1'></td>";
+        $index += 1;
+    }
+    echo "</tbody>";
+    echo "</table>"; 
+    }
 }
 
 //all the tags content require for the Nasa contact form
@@ -192,9 +230,9 @@ function nasa_contact_form(){
             $content .= '<div>';    
             $content .= '<select name="gender">';
             $content .= '<option value="" disabled selected>Selecciona tu sexo</option>';
-            $content .= '<option value="female">Femenino</option>';
-            $content .= '<option value="male">Masculino</option>';
-            $content .= '<option value="undefined_sex">Otro</option>';
+            $content .= '<option value="masculino">Femenino</option>';
+            $content .= '<option value="femenino">Masculino</option>';
+            $content .= '<option value="prefiere no especificarlo">Otro</option>';
             $content .= '</select>';
             $content .= '<input type="email" name="email" placeholder="Correo electrónico" />';
             $content .= '</div>';
